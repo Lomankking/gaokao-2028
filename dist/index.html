@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f7f2">
+  <meta name="description" content="2028 高考提分系统：成绩、学习任务、计时、错题、知识点和周统计，离线记录。">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <title>2028 高考提分系统</title>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <a class="brand" href="#today"><span class="brand-mark">28</span><span>高考提分系统<small>向 620 分，稳步前进</small></span></a>
+      <nav class="side-nav" id="side-nav"></nav>
+      <div class="sidebar-note"><strong>每天进步一点点</strong><span>数据只保存在这台设备的浏览器中，请定期导出备份。</span></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><p class="eyebrow" id="today-date"></p><h1 id="page-title">今日总览</h1></div><span class="offline-badge" id="network-badge">本地记录</span></header>
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+      <section class="page" id="page-today" aria-labelledby="page-title">
+        <div class="hero card"><div><p class="eyebrow">2028 高考 · 成长路线</p><h2>从现在开始，<br>把每一天学扎实。</h2><p>先抓数学、物理、化学的基础，再用复习巩固每一步。</p><button class="button button-light" data-go="tasks">安排今天的任务 <span aria-hidden="true">↗</span></button></div><div class="hero-score"><span>目标总分</span><strong>620<span>/750</span></strong><small>当前参考 280 分</small></div></div>
+        <div class="metric-grid"><article class="metric card"><span>今日任务</span><strong id="today-task-count">0/0</strong><small>完成情况</small></article><article class="metric card"><span>今日学习</span><strong id="today-minutes">0<em> 分钟</em></strong><small>已记录的专注时间</small></article><article class="metric card"><span>待复习错题</span><strong id="due-count">0</strong><small>今天及以前到期</small></article></div>
+        <div class="two-col"><article class="card panel"><div class="section-heading"><div><span class="section-kicker">TODAY'S PLAN</span><h2>今天要做</h2></div><button class="text-button" data-go="tasks">查看全部 →</button></div><div id="today-task-list"></div></article><article class="card panel"><div class="section-heading"><div><span class="section-kicker">FOCUS</span><h2>现在开始专注</h2></div></div><p class="muted">先选一科，专注 25 分钟也算一次前进。</p><div id="mini-timer"></div><button class="button button-outline full" data-go="timer">打开学习计时器</button></article></div>
+      </section>
+
+      <section class="page" id="page-scores" hidden><div class="section-heading page-heading"><div><p class="section-kicker">SCORE TRACKER</p><h2>六科成绩</h2><p class="muted">先录入各科成绩，再看总分变化。目标分是建议值，可修改。</p></div></div><div class="score-summary card"><div><span>当前参考总分</span><strong id="score-total">280</strong><small id="score-total-note">根据你的描述，六科实测成绩待录入</small></div><div class="goal-inline"><span>目标</span><strong>620</strong><small>/ 750 分</small></div></div><div id="subject-grid" class="subject-grid"></div><article class="card panel"><div class="section-heading"><h2>录入一次成绩</h2></div><form id="score-form" class="form-grid"><label>科目<select name="subjectId" id="score-subject"></select></label><label>日期<input name="date" type="date" required></label><label>分数<input name="score" type="number" min="0" step="0.5" required placeholder="例如 68"></label><button class="button" type="submit">保存成绩</button></form></article><article class="card panel"><div class="section-heading"><h2>最近成绩记录</h2></div><div id="score-history"></div></article></section>
+
+      <section class="page" id="page-tasks" hidden><div class="section-heading page-heading"><div><p class="section-kicker">DAILY PLAN</p><h2>每日学习任务</h2><p class="muted">任务写得具体一些，例如“完成一元二次方程基础题 10 道”。</p></div></div><article class="card panel"><form id="task-form" class="form-grid"><label class="wide">任务内容<input name="title" maxlength="160" required placeholder="今天要完成什么？"></label><label>科目<select name="subjectId" id="task-subject"></select></label><label>日期<input name="date" type="date" required></label><label>预计用时（分钟）<input name="plannedMinutes" type="number" min="0" max="1440" value="30" required></label><button class="button" type="submit">添加任务</button></form></article><div class="filter-row"><label>查看日期<input id="task-filter-date" type="date"></label><button id="task-today" class="chip" type="button">回到今天</button></div><div id="task-list" class="stack"></div></section>
+
+      <section class="page" id="page-timer" hidden><div class="section-heading page-heading"><div><p class="section-kicker">FOCUS TIMER</p><h2>学习计时器</h2><p class="muted">计时中切到其他页面也会继续；结束后记录实际分钟数。</p></div></div><article class="card timer-card"><div class="timer-orbit"><span>专注学习</span><strong id="timer-display">00:00</strong><small id="timer-state">尚未开始</small></div><label class="timer-subject">本次科目<select id="timer-subject"></select></label><div class="timer-actions"><button id="timer-toggle" class="button" type="button">开始计时</button><button id="timer-finish" class="button button-outline" type="button">结束并记录</button><button id="timer-reset" class="text-button" type="button">清零</button></div><p class="hint">不足 1 分钟的记录不会计入统计。离开页面前请结束并记录。</p></article><article class="card panel"><div class="section-heading"><h2>最近学习记录</h2></div><div id="session-list"></div></article></section>
+
+      <section class="page" id="page-mistakes" hidden><div class="section-heading page-heading"><div><p class="section-kicker">MISTAKE BOOK</p><h2>错题本</h2><p class="muted">记下错误原因，比只抄题目更有用。到期后点“完成复习”安排下次复习。</p></div></div><article class="card panel"><form id="mistake-form" class="form-grid"><label>科目<select name="subjectId" id="mistake-subject"></select></label><label>下次复习日期<input name="nextReview" type="date" required></label><label class="wide">题目或考点<textarea name="question" maxlength="2000" required placeholder="这道题考什么？可以写教材页码或题号"></textarea></label><label class="wide">正确思路<textarea name="answer" maxlength="2000" placeholder="写下关键解法"></textarea></label><label class="wide">错误原因<textarea name="reason" maxlength="2000" placeholder="例如公式没记牢、审题漏条件"></textarea></label><button class="button" type="submit">加入错题本</button></form></article><div class="filter-row"><label>筛选科目<select id="mistake-filter"><option value="all">全部科目</option></select></label><span id="mistake-filter-hint" class="muted"></span></div><div id="mistake-list" class="stack"></div></section>
+
+      <section class="page" id="page-points" hidden><div class="section-heading page-heading"><div><p class="section-kicker">KNOWLEDGE MAP</p><h2>知识点掌握</h2><p class="muted">把薄弱点列出来，逐步从“未学”推进到“已掌握”。</p></div></div><article class="card panel"><form id="point-form" class="form-grid"><label class="wide">知识点<input name="title" maxlength="160" required placeholder="例如：函数单调性"></label><label>科目<select name="subjectId" id="point-subject"></select></label><label>当前状态<select name="status"><option>未学</option><option>学习中</option><option>已掌握</option></select></label><button class="button" type="submit">添加知识点</button></form></article><div id="point-summary" class="status-grid"></div><div id="point-list" class="stack"></div></section>
+
+      <section class="page" id="page-stats" hidden><div class="section-heading page-heading"><div><p class="section-kicker">WEEKLY REVIEW</p><h2>每周学习统计</h2><p class="muted" id="week-range"></p></div></div><div class="metric-grid"><article class="metric card"><span>本周专注</span><strong id="week-minutes">0<em> 分钟</em></strong><small>已结束并记录</small></article><article class="metric card"><span>完成任务</span><strong id="week-completed">0</strong><small id="week-due">本周共 0 项</small></article><article class="metric card"><span>知识点已掌握</span><strong id="mastered-count">0</strong><small id="point-count">共 0 个知识点</small></article></div><article class="card panel"><div class="section-heading"><h2>每天学习分钟数</h2></div><div id="week-chart" class="week-chart" role="img" aria-label="本周每日学习时长柱状图"></div></article><article class="card panel"><div class="section-heading"><h2>本周建议</h2></div><p id="week-suggestion" class="muted"></p></article></section>
+
+      <section class="page" id="page-backup" hidden><div class="section-heading page-heading"><div><p class="section-kicker">DATA SAFETY</p><h2>数据备份</h2><p class="muted">数据只在当前浏览器保存。换手机、清除浏览器数据前，请先导出 JSON 文件。</p></div></div><div class="two-col"><article class="card panel"><span class="feature-icon">↓</span><h2>导出备份</h2><p class="muted">下载完整学习记录，建议每周备份一次，并保存在手机文件或云盘。</p><button id="export-button" class="button full" type="button">下载 JSON 备份</button></article><article class="card panel"><span class="feature-icon">↑</span><h2>恢复备份</h2><p class="muted">选择本系统导出的 JSON 文件。确认后会覆盖当前浏览器里的全部记录。</p><label class="button button-outline full file-label">选择 JSON 文件<input id="import-file" type="file" accept=".json,application/json"></label></article></div><article class="card panel"><h2>存储说明</h2><ul class="help-list"><li>没有登录和云同步；不同浏览器、不同手机的数据互不相通。</li><li>浏览器无痕模式或清理网站数据会删除记录，务必定期导出。</li><li>第一次联网打开页面后，等待页面缓存完成，才可尝试离线打开。</li></ul><p id="storage-status" class="muted"></p></article></section>
+      <footer class="footer">2028 高考提分系统 · 一次只做好眼前这一题</footer>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottom-nav" aria-label="手机导航"></nav>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
